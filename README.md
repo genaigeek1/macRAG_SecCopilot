@@ -114,7 +114,7 @@ Click `📥 Generate Mindmap` in the Streamlit app to download `.html` and open 
 
 ## 🤝 Contributors
 
-Built by [Saurabh Chhatwal](https://www.linkedin.com/in/genaigeek/), powered by Open Source & OpenAI.
+Built by [Saurabh Chhatwal](https://www.linkedin.com/in/genaigeek/), powered by LangChain and OLLAMA
 
 ---
 

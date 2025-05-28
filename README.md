@@ -1,86 +1,123 @@
-# 🛡️ macRAG SecCopilot (Stakeholder Pitch Edition)
+# 🛡️ macRAG SecCopilot
 
-macRAG SecCopilot is a local, secure, AI-driven assistant built to reduce **Mean Time To Detect (MTTD)** and **Mean Time To Respond (MTTR)** for security incidents using Retrieval-Augmented Generation (RAG), LangChain, and OpenAI.
-
----
-
-## 📊 Architecture Overview
-
-![RAG Architecture](docs/ragaidemo.png)
-
-### Key Stages:
-1. **Ingest:** Parse logs and incident reports (CloudTrail, Syslog, Microsoft Security).
-2. **Retrieve:** Use vector search (FAISS) to find relevant context chunks.
-3. **Augment:** Combine query with context to build full prompt.
-4. **Generate:** Answer using OpenAI (ChatGPT/GPT-4) or Ollama (LLaMA, Mistral).
+**macRAG SecCopilot** is a local, containerized **Retrieval-Augmented Generation (RAG)**-based AI Security Investigator designed to streamline the process of **security incident triage**, **alert analysis**, and **mean time to resolution (MTTR)** reduction.
 
 ---
 
-## 💡 Why It Matters
+## 📌 Key Benefits
 
-### 🚀 Business Benefits:
-- **Up to 80% faster investigation time** for high-fidelity alerts
-- **Data does not leave your machine** (RAG is fully localizable)
-- Analysts get actionable summaries, risk scores, and playbooks in seconds
+- 🧠 **AI-augmented Chat** for incident interpretation
+- 📊 **Risk Scoring** and **Anomaly Detection**
+- 🗺️ **Markdown to Mindmap** generation for incident reports
+- ⏱️ **MTTD/MTTR analytics** for leadership dashboards
+- 🐳 **Self-healing Dockerized Setup** for Apple Silicon
 
-### 📉 Reduces:
-- Alert fatigue
-- Manual log correlation effort
-- Time wasted in triage loops
+---
+
+## 🧠 Architecture
+
+![macRAG Architecture](./docs/ragaidemo.png)
+
+---
+
+## 🚀 How to Run (Docker)
+
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+This will:
+- Clean up existing containers
+- Download Ollama + LLMs
+- Launch Streamlit app at `http://localhost:8501`
 
 ---
 
 ## 🔍 Features Overview
 
-| Feature                 | Description |
-|------------------------|-------------|
-| 🔥 Threat & Risk Scores | Based on parsed events and severity levels |
-| 🧠 LangChain Chat Assistant | Ask “What triggered the alert?” and get a contextual answer |
-| 🗂️ Tabbed Streamlit UI  | Home, Chat, Mindmap |
-| 📥 Mindmap Generator    | Creates interactive incident mindmaps |
-| ⏱️ MTTD & MTTR Estimates | Shows detection and recommended resolution times |
-| 📄 Log Parsing          | Supports `.json`, `.csv`, `.log` file uploads |
-| 📦 Markdown & HTML Export | Incident summaries exportable for reports |
+| Feature                    | Description |
+|----------------------------|-------------|
+| 🔐 AI Assistant            | Ask “What happened before the alert?” or “How to prevent this?” |
+| 📄 Markdown Summary        | LLM-generated incident summary |
+| 🧠 Mindmap Export          | Visualize incident story as interactive mindmap |
+| 📈 Risk Score              | Classifies threat severity |
+| ⏱️ MTTR Metrics            | Auto-derived Mean Time To Detect / Resolve |
+| 🛠️ Streamlit Tabs          | Home, Chat, Mindmap, Report |
+| 🐳 Docker Ready            | Self-healing, fast rebuilds, Apple Silicon optimized |
+| 🧪 Supports multiple LLMs  | Ollama, OpenAI, etc. via `.env` toggle |
 
 ---
 
-## 🛠️ How to Run
+## ⚙️ Configuration (.env)
 
-```bash
-# Step 1: Add your OpenAI API key to `.env`
-cp .env.example .env
-# Edit .env and fill in OPENAI_API_KEY=sk-...
+Create a `.env` file or modify `.env.example`:
 
-# Step 2: Launch the app
-./setup.sh
+```env
+LLM_BACKEND=ollama
+VECTOR_DB=faiss
+EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+STREAMLIT_SERVER_PORT=8501
+OPENAI_API_KEY=your-key-here  # (if using OpenAI backend)
 ```
-
-Then open [http://localhost:8501](http://localhost:8501)
 
 ---
 
-## 🗂 Directory Structure
+## 📂 Directory Structure
 
-```
-macRAG_SecCopilot/
+```text
+├── docker-compose.yml
+├── setup.sh
+├── .env.example
 ├── streamlit_app/
 │   ├── Home.py
-│   ├── Chat.py
-│   └── Mindmap.py
+│   ├── chat.py
+│   ├── report_mindmap.py
+│   └── ...
 ├── src/
-├── notebooks/
+│   ├── loaders/
+│   ├── chunkers/
+│   ├── parsers/
+│   └── utils/
 ├── data/
-├── docs/
-│   └── ragaidemo.png
-├── .env / .env.example
-├── requirements.txt
-├── setup.sh
-└── README.md
+│   ├── mock_security_incidents.csv
+│   └── ...
+├── notebooks/
+│   └── threat_analysis.ipynb
+└── README.md  ← you are here
 ```
 
 ---
 
-## 👥 Ideal For
-- CISO demos
-- Cybersecurity PoCs
-- SOC modernization strategy
+## 📥 Download Incident Mindmap
+
+Click `📥 Generate Mindmap` in the Streamlit app to download `.html` and open in Chrome.
+
+---
+
+## 🧠 Example Use Cases
+
+- Reducing **SOC analyst fatigue** with guided interpretation
+- Helping CISO teams quantify **alert impact**
+- Quickly reviewing **threat narratives** across time
+- Integrating with **CloudTrail / Syslog / Sentinel** alerts
+
+---
+
+## 📈 Future Enhancements
+
+- LangSmith + Weights & Biases observability
+- NIST tagging and MITRE ATT&CK classification
+- CI/CD integration and test automation
+
+---
+
+## 🤝 Contributors
+
+Built by [Saurabh Chhatwal](https://www.linkedin.com/in/genaigeek/), powered by Open Source & OpenAI.
+
+---
+
+## 🛑 License
+
+MIT License — use freely with attribution.

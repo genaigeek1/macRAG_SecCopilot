@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+*.pkl
+
+# Streamlit
+.streamlit/
+*.html
+*.log
+*.csv
+*.db
+
+# Docker artifacts
+.env
+.env.*
+docker-compose.override.yml
+
+# OS & IDE junk
+.DS_Store
+.vscode/
+.idea/
+
+# Zip files
+*.zip
+
+# Notebooks output
+.ipynb_checkpoints/
+notebooks/__pycache__/
+
+# Datasets
+data/
+*.parquet
+*.jsonl

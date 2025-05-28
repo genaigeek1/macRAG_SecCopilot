@@ -1,0 +1,25 @@
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama_service
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: macrag_streamlit_app
+    ports:
+      - "${STREAMLIT_SERVER_PORT}:${STREAMLIT_SERVER_PORT}"
+    volumes:
+      - .:/app
+    environment:
+      - LLM_BACKEND=${LLM_BACKEND}
+    depends_on:
+      - ollama
+    command: >
+      streamlit run streamlit_app/Home.py 
+      --server.port=${STREAMLIT_SERVER_PORT} 
+      --server.enableCORS=${STREAMLIT_SERVER_ENABLECORS}

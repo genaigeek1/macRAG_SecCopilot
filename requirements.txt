@@ -1,0 +1,13 @@
+streamlit
+markdown2
+matplotlib
+pandas
+scikit-learn
+langchain
+openai
+faiss-cpu
+tqdm
+python-dotenv
+beautifulsoup4
+lxml
+plotly

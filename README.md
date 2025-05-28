@@ -104,6 +104,48 @@ Click `📥 Generate Mindmap` in the Streamlit app to download `.html` and open 
 
 ---
 
+## 🧠 Step 1: Try These Security Investigation Chat Prompts
+
+Here’s a curated list of smart, realistic questions you can ask in the Chat section of **macRAG SecCopilot** to simulate stakeholder usage or demonstrate LLM-powered investigation value:
+
+---
+
+### 🔍 Threat Investigation Questions
+- “What happened before this alert?”
+- “Why is this login attempt flagged?”
+- “Was this IP seen in past incidents?”
+- “Show me events 5 minutes before and after the alert.”
+- “When did the suspicious user activity start?”
+- “Where was this user logged in from?”
+- “Has this user ever accessed from this country before?”
+- “Which sensitive files were accessed?”
+- “Was data exfiltration attempted?”
+
+### 🛡️ Severity & Risk
+- “What is the risk score of this incident?”
+- “What factors increased the risk?”
+- “Is this a false positive?”
+- “How severe is this threat compared to others today?”
+
+### 🛠 Remediation Guidance
+- “How can we prevent this type of alert?”
+- “What controls should be enabled?”
+- “Which playbook applies here?”
+- “Recommend a response plan.”
+
+### 📊 Incident Report Summary
+- “Summarize this incident.”
+- “Explain this alert like I’m a CISO.”
+- “How often does this type of alert occur?”
+- “Is this part of a pattern?”
+
+### 🧠 Bonus Smart Prompts
+- “Link this alert to any past similar alerts.”
+- “What user behaviors preceded this event?”
+- “Generate a mindmap for this threat.”
+
+---
+
 ## 📈 Future Enhancements
 
 - LangSmith + Weights & Biases observability

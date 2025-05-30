@@ -1,13 +1,24 @@
-streamlit
-markdown2
-matplotlib
-pandas
-scikit-learn
-langchain
-openai
-faiss-cpu
-tqdm
-python-dotenv
-beautifulsoup4
-lxml
-plotly
+# Core Streamlit UI
+streamlit==1.33.0
+markdown2==2.4.11
+matplotlib==3.8.4
+plotly==5.20.0
+pandas==2.2.2
+
+# ML/Vector DB
+scikit-learn==1.6.1
+faiss-cpu==1.8.0
+tqdm==4.66.4
+
+# LLM Orchestration
+langchain==0.1.13
+openai==0.28
+ollama==0.1.7
+
+# Utilities
+python-dotenv==1.0.1
+beautifulsoup4==4.12.3
+lxml==5.2.1
+networkx==3.3
+pyvis==0.3.2
+folium==0.16.0

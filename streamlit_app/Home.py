@@ -1,82 +1,156 @@
-
+# ✅ FIXED Home.py - Custom Query Input Now Persists
 import streamlit as st
 import pandas as pd
-import random
-import markdown2
+import matplotlib.pyplot as plt
+import networkx as nx
+import folium
+from streamlit.components.v1 import html
+from pyvis.network import Network
+from langchain.llms import Ollama
+from langchain.chat_models import ChatOpenAI
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
+import json, os
+from datetime import datetime
+import requests
 
-# Streamlit page config
-st.set_page_config(page_title="macRAG SecCopilot", layout="wide")
+# --- Page Config ---
+st.set_page_config(page_title="Security Investigator Copilot", layout="wide")
 
-# --- TABS ---
-tab1, tab2, tab3 = st.tabs(["🏠 Home", "💬 Chat", "🧠 Mindmap"])
+# --- Determine LLM URL (Docker-aware) ---
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://host.docker.internal:11434")  # fallback for containers
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-# --- HOME TAB ---
-with tab1:
-    st.title("macRAG SecCopilot Dashboard")
-    st.markdown("AI-assisted analysis of security incidents with threat scoring and response optimization.")
+# --- Sidebar ---
+st.sidebar.title("🔐 SecCopilot Navigation")
+st.sidebar.markdown("Use this panel to control data, LLMs, and views.")
+llm_mode = st.sidebar.radio("Choose LLM Mode:", ["Local (Ollama)", "Cloud (OpenAI)"])
+if st.sidebar.button("🔄 Regenerate Visual Files"):
+    st.experimental_rerun()
+if st.sidebar.button("📥 Download Prompt Log (CSV)"):
+    try:
+        logs = [json.loads(line) for line in open("query_log.json")]
+        df = pd.DataFrame(logs)
+        csv = df.to_csv(index=False).encode("utf-8")
+        st.sidebar.download_button("Download CSV", csv, "prompt_log.csv", "text/csv")
+    except Exception as e:
+        st.sidebar.error("Log file not found or empty.")
 
-    # Sample data
-    df = pd.DataFrame({
-        "Timestamp": ["2025-05-01 08:30", "2025-05-01 08:35", "2025-05-01 08:40"],
-        "Event": ["SSH access detected", "Config file modified", "Root access granted"],
-        "Severity": ["High", "Medium", "Critical"]
-    })
+# --- Tab Selector ---
+tab = st.selectbox("Choose Section", ["Dashboard", "LLM Explorer", "Log Viewer"])
 
-    st.markdown("### 🚨 Incident Timeline")
-    for _, row in df.iterrows():
-        with st.expander(f"{row['Timestamp']} - {row['Event']}"):
-            st.write(f"Severity: {row['Severity']}")
+# Global Sample Data
+data = pd.DataFrame({
+    "User": ["alice", "bob", "charlie"],
+    "Role": ["admin", "viewer", "editor"],
+    "Service": ["S3", "EC2", "IAM"],
+    "Access Level": ["Full", "Read", "Write"],
+    "Risk Score": [85, 60, 75],
+    "Location": ["Ashburn, VA", "Frankfurt, DE", "Singapore"],
+    "Last Login": ["2024-05-27", "2024-05-28", "2024-05-28"]
+})
 
-    st.markdown("### 📊 Risk Metrics")
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Threat Score", f"{random.uniform(90, 99):.2f}%", "Critical")
-    col2.metric("Risk Score", f"{random.uniform(80, 95):.2f}%", "High")
-    col3.metric("MTTD", f"{random.randint(1, 4)} hours")
-    col4.metric("Recommended MTTR", "Hours")
+# -------------------- TAB 1 --------------------
+if tab == "Dashboard":
+    st.title("📊 Security Risk Dashboard")
+    st.subheader("Step 1: Threat Summary Metrics")
+    col1, col2, col3 = st.columns(3)
+    col4, col5, col6 = st.columns(3)
+    col7 = st.columns(1)[0]
 
-# --- CHAT TAB ---
-with tab2:
-    st.markdown("### 💬 Chat with SecCopilot")
-    question = st.text_input("Ask your question about the incident:")
-    if question:
-        st.write("🤖 Copilot says:")
-        st.success("Based on the logs, this incident likely originated from a misconfigured firewall rule exposing SSH.")
+    col1.metric("Threat Score %", "92.8%", "+2.1")
+    col2.metric("Risk Score", "87.4", "-1.3")
+    col3.metric("R-MMTD", "20 sec")
+    col4.metric("R-MMTR", "65 min")
+    col5.metric("Systems Impacted", "12")
+    col6.metric("Users Impacted", "28")
+    col7.metric("$ Value Impact", "$1,344", "$48/user")
 
-# --- MINDMAP TAB ---
-with tab3:
-    st.markdown("### 🧠 Incident Mindmap")
+    st.subheader("Step 2: IAM Entity Graph")
+    with st.expander("Show Interactive Graph"):
+        try:
+            with open("streamlit_app/interactive_graph.html", 'r') as f:
+                html(f.read(), height=500)
+        except:
+            st.warning("interactive_graph.html not found in streamlit_app/")
 
-    # Create mock mindmap markdown
-    markdown_text = '''
-# Incident Mindmap
-## Summary
-- SSH brute-force attempt detected
-- Root access granted
-## Timeline
-- 08:30 - SSH access
-- 08:35 - Config modified
-- 08:40 - Root login
-## Recommendations
-- Revoke credentials
-- Patch access rules
-- Enable MFA
-'''
+    st.subheader("Step 3: IAM Dataset View")
+    st.dataframe(data, use_container_width=True)
 
-    st.markdown(markdown2.markdown(markdown_text))
+    st.subheader("Step 4: Geo Attribution Map")
+    with st.expander("Show Map"):
+        try:
+           with open("streamlit_app/geo_map.html", 'r') as f:
+                html(f.read(), height=500)
+        except:
+            st.warning("geo_map.html not found in streamlit_app/")
 
-    mindmap_html = f'''
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <script src="https://cdn.jsdelivr.net/npm/markmap-autoloader"></script>
-    </head>
-    <body>
-        <svg id="mindmap"></svg>
-        <script>
-            window.markmap.autoLoader.render("mindmap", `{markdown_text}`);
-        </script>
-    </body>
-    </html>
-    '''
-    st.download_button("📥 Download Mindmap (HTML)", mindmap_html.encode("utf-8"), "incident_mindmap.html", "text/html")
+# -------------------- TAB 2 --------------------
+elif tab == "LLM Explorer":
+    st.header("🤖 Step 5: LLM Data Exploration")
+    example_queries = [
+        "Which user has the highest risk score?",
+        "List users with Full access",
+        "How many users accessed IAM service?",
+        "Which role has the most risky users?",
+        "What is the average risk score by location?"
+    ]
+
+    query_choice = st.selectbox("Choose a preset query or write your own:", ["Custom..."] + example_queries)
+    if query_choice == "Custom...":
+        user_query = st.text_area("Type your custom security query:", key="custom_query")
+    else:
+        user_query = query_choice
+
+    prompt = PromptTemplate.from_template(
+        """
+        You are an expert IAM security analyst. Based on the following CSV dataset:
+
+        {data}
+
+        Answer the user's question: {question}
+        """
+    )
+
+    if st.button("Run Local SecPilot"):
+        if user_query.strip():
+            with st.spinner("Running selected LLM model..."):
+                try:
+                    if llm_mode == "Local (Ollama)":
+                        if not requests.get(OLLAMA_HOST).ok:
+                            raise ValueError("Ollama endpoint unreachable")
+                        llm = Ollama(base_url=OLLAMA_HOST, model="mistral")
+                    else:
+                        if not OPENAI_API_KEY:
+                            raise ValueError("Missing OpenAI API Key in environment.")
+                        llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY, temperature=0)
+
+                    chain = LLMChain(llm=llm, prompt=prompt)
+                    result = chain.run(data=data.to_csv(index=False), question=user_query)
+                    st.success("Response:")
+                    st.write(result)
+
+                    log = {
+                        "timestamp": datetime.now().isoformat(),
+                        "query": user_query,
+                        "response": result,
+                        "mode": llm_mode
+                    }
+                    with open("query_log.json", "a") as f:
+                        f.write(json.dumps(log) + "\n")
+
+                except Exception as e:
+                    st.error(f"❌ LLM connection failed: {e}")
+        else:
+            st.warning("Please enter a question.")
+
+# -------------------- TAB 3 --------------------
+elif tab == "Log Viewer":
+    st.header("📑 LLM Prompt History")
+    try:
+        with open("query_log.json") as f:
+            logs = [json.loads(line) for line in f if line.strip()]
+            df = pd.DataFrame(logs)
+            st.dataframe(df, use_container_width=True)
+    except:
+        st.warning("No prompt history found. Run some queries first.")
